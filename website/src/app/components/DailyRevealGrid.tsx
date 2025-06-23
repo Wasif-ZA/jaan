@@ -1,15 +1,14 @@
 // GalleryComponents.tsx
-// Next.js (App Router) **TypeScript** client components
-// • DailyRevealGrid – 27‑day calendar (local images)
-// • SwipeCards      – Tinder‑like swipe deck pulling from the same pool
+// Next.js (App Router) **TypeScript** client‑side components
+// — DailyRevealGrid: 27‑day flip‑card calendar (local images)
+// — SwipeCards: Tinder‑style swipe deck that uses *all* images from the same pool
 //
-// Images are collected at build‑time by scripts/generateImageManifest.ts and written to
-// image‑manifest.json in the project root. Drop *any* filenames into /public/images – no naming
-// convention required.
+// `image‑manifest.json` is created at build time by scripts/generateImageManifest.ts.
+// Put any pictures in `/public/images/` — no naming rules needed.
 
 "use client";
 
-import { useState, type FC } from "react";
+import React, { useState, useEffect, type FC } from "react";
 import type { IconType } from "react-icons";
 import { FiHeart } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
@@ -25,19 +24,19 @@ import {
 } from "framer-motion";
 
 /******************************************************************************************
- * IMAGE MANIFEST (auto‑generated JSON)
+ * IMAGE MANIFEST  ➜  LOCAL_IMAGES
  ******************************************************************************************/
-// tsconfig.json must include: "resolveJsonModule": true, "esModuleInterop": true
-// Component is at app/components/ → two levels up to project root
-import imageManifest from "../../image-manifest.json";
+// tsconfig.json must include:  "resolveJsonModule": true  &  "esModuleInterop": true
+import imageManifest from "../../../image-manifest.json";
 const LOCAL_IMAGES: string[] = (imageManifest as string[]).filter(Boolean);
 
 /******************************************************************************************
  * DAILY REVEAL GRID
  ******************************************************************************************/
-const START_ISO = "2025-06-21"; // inclusive
-const TOTAL_DAYS = 27;
+const START_ISO = "2025-06-21";              // inclusive start date
+const TOTAL_DAYS = 27;                        // 21 Jun → 17 Jul
 const MS_PER_DAY = 86_400_000;
+
 const HEART_ICONS: IconType[] = [
   FiHeart,
   FaHeart,
@@ -56,12 +55,11 @@ interface DayMeta {
 }
 
 const buildDayData = (): DayMeta[] => {
-  const start = new Date(`${START_ISO}T00:00:00+10:00`);
-  // 🚫 Remove random shuffle to keep server & client output identical
-  const shuffled = LOCAL_IMAGES;
+  const start = new Date(`${START_ISO}T00:00:00+10:00`); // force AEST offset
   return Array.from({ length: TOTAL_DAYS }, (_, i) => {
     const date = new Date(start.getTime() + i * MS_PER_DAY);
-    const imgFile = shuffled[i % shuffled.length] ?? "fallback.jpg";
+    const imgFile = LOCAL_IMAGES[i % LOCAL_IMAGES.length] ?? "fallback.jpg";
+
     return {
       date,
       shortLabel: date.toLocaleDateString("en-AU", { day: "numeric", month: "short" }),
@@ -93,40 +91,21 @@ const DayCard: FC<DayCardProps> = ({ meta }) => {
     <motion.div onClick={() => !locked && setOpen((p) => !p)} className="group relative aspect-[3/4] w-full select-none">
       <div className={`relative h-full w-full overflow-hidden rounded-lg p-0.5 transition-colors duration-300 ${locked ? "bg-gray-300" : "bg-slate-800"}`}>
         <AnimatePresence initial={false} mode="wait">
-          {!open ? (
-            <motion.div
-              key="front"
-              initial={{ rotateY: 0 }}
-              animate={{ rotateY: 0 }}
-              exit={{ rotateY: 90 }}
-              transition={{ duration: 0.3 }}
-              className={`flex h-full flex-col items-center justify-center rounded-[7px] bg-slate-900 transition-colors duration-300 ${locked ? "bg-gray-200" : "group-hover:bg-slate-800"}`}
-            >
-              <span className={`mb-3 text-4xl sm:text-5xl ${colorClass}`}><Icon /></span>
-              <span className={`text-xl sm:text-2xl font-bold ${locked ? "text-gray-400" : "text-white"}`}>{meta.shortLabel}</span>
+          {open ? (
+            <motion.div key="back" initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} exit={{ rotateY: 90 }} transition={{ duration: 0.3 }} className="flex h-full flex-col rounded-[7px] bg-pink-500">
+              <img src={meta.img} alt="Surprise" className="h-2/3 w-full object-cover" />
+              <p className="flex-grow px-2 py-2 text-center text-xs sm:text-sm text-white leading-snug">{meta.caption}</p>
             </motion.div>
           ) : (
-            <motion.div
-              key="back"
-              initial={{ rotateY: 90 }}
-              animate={{ rotateY: 0 }}
-              exit={{ rotateY: 90 }}
-              transition={{ duration: 0.3 }}
-              className="flex h-full flex-col rounded-[7px] bg-slate-900"
-            >
-              <img src={meta.img} alt="Surprise" className="h-2/3 w-full object-cover" />
-              <p className="flex-grow px-2 py-2 text-center text-xs sm:text-sm text-slate-300 leading-snug">{meta.caption}</p>
+            <motion.div key="front" initial={{ rotateY: 0 }} animate={{ rotateY: 0 }} exit={{ rotateY: 90 }} transition={{ duration: 0.3 }} className={`flex h-full flex-col items-center justify-center rounded-[7px] bg-pink-100 transition-colors duration-300 ${locked ? "bg-gray-200" : "group-hover:bg-pink-500"}`}>
+              <span className={`mb-3 text-4xl sm:text-5xl ${colorClass}`}><Icon /></span>
+              <span className={`text-xl sm:text-2xl font-bold ${locked ? "text-gray-400" : "text-pink-700"}`}>{meta.shortLabel}</span>
             </motion.div>
           )}
         </AnimatePresence>
+
         {!locked && (
-          <motion.div
-            initial={{ rotate: "0deg" }}
-            animate={{ rotate: "360deg" }}
-            style={{ scale: 1.75 }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: "linear" }}
-            className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-pink-300 via-pink-300/0 to-pink-500 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          />
+          <motion.div initial={{ rotate: "0deg" }} animate={{ rotate: "360deg" }} style={{ scale: 1.75 }} transition={{ repeat: Infinity, duration: 3.5, ease: "linear" }} className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-pink-300 via-pink-300/0 to-pink-500 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         )}
       </div>
     </motion.div>
@@ -135,7 +114,7 @@ const DayCard: FC<DayCardProps> = ({ meta }) => {
 
 const DailyRevealGrid: FC = () => (
   <section className="mx-auto max-w-6xl px-3 sm:px-4 py-8 sm:py-12">
-    <h1 className="mb-8 sm:mb-10 text-center text-3xl sm:text-4xl font-extrabold">27‑Day Reveal Calendar</h1>
+    <h1 className="mb-8 sm:mb-10 text-center text-3xl sm:text-4xl font-extrabold text-pink-600">27‑Day Reveal Calendar</h1>
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5" style={{ gridAutoRows: "1fr" }}>
       {DAY_DATA.map((d) => <DayCard key={d.date.toISOString()} meta={d} />)}
     </div>
@@ -143,35 +122,29 @@ const DailyRevealGrid: FC = () => (
 );
 
 /******************************************************************************************
- * SWIPE CARDS (Tinder‑like)
+ * SWIPE CARDS  (uses ALL images, shuffles client‑side)
  ******************************************************************************************/
 interface CardItem { id: number; url: string; }
-const shuffle = <T,>(arr: T[]): T[] => {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
-
-const initialSwipeCards: CardItem[] = shuffle(
-  LOCAL_IMAGES.map((file, idx) => ({ id: idx + 1, url: `/images/${file}` }))
-);
+const allSwipeCards: CardItem[] = LOCAL_IMAGES.map((file, idx) => ({ id: idx + 1, url: `/images/${file}` }));
 
 export const SwipeCards: FC = () => {
-  const [cards, setCards] = useState<CardItem[]>(initialSwipeCards);
+  const [cards, setCards] = useState<CardItem[]>(allSwipeCards);
+
+  // 💡 Shuffle once on the client after hydration to avoid SSR mismatch
+  useEffect(() => {
+    setCards((prev) => {
+      const a = [...prev];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    });
+  }, []);
+
   return (
-    <div
-      className="grid h-[500px] w-full place-items-center bg-neutral-100"
-      style={{
-        backgroundImage:
-          "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke-width='2' stroke='%23d4d4d4'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e\")",
-      }}
-    >
-      {cards.map((c) => (
-        <SwipeCard key={c.id} item={c} cards={cards} setCards={setCards} />
-      ))}
+    <div className="grid h-[500px] w-full place-items-center bg-neutral-100" style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke-width='2' stroke='%23d4d4d4'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e")` }}>
+      {cards.map((c) => <SwipeCard key={c.id} item={c} cards={cards} setCards={setCards} />)}
     </div>
   );
 };
@@ -192,13 +165,15 @@ const SwipeCard: FC<SwipeCardProps> = ({ item, cards, setCards }) => {
   const rotate = useTransform(() => `${rotateRaw.get() + (isFront ? 0 : id % 2 ? 6 : -6)}deg`);
 
   const handleDragEnd = () => {
-    if (Math.abs(x.get()) > 100) setCards((pv) => pv.filter((v) => v.id !== id));
+    if (Math.abs(x.get()) > 100) {
+      setCards((prev) => prev.filter((v) => v.id !== id));
+    }
   };
 
   return (
     <motion.img
       src={url}
-      alt="Swipe card"
+      alt={`Swipe card ${id}`}
       className="h-96 w-72 origin-bottom rounded-lg bg-white object-cover hover:cursor-grab active:cursor-grabbing"
       style={{
         gridRow: 1,
@@ -206,10 +181,8 @@ const SwipeCard: FC<SwipeCardProps> = ({ item, cards, setCards }) => {
         x,
         opacity,
         rotate,
-        transition: "0.125s transform",
-        boxShadow: isFront
-          ? "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4)"
-          : "",
+        transition: "0.15s transform",
+        boxShadow: isFront ? "0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.4)" : "",
       }}
       animate={{ scale: isFront ? 1 : 0.98 }}
       drag={isFront ? "x" : false}
@@ -219,4 +192,7 @@ const SwipeCard: FC<SwipeCardProps> = ({ item, cards, setCards }) => {
   );
 };
 
+/******************************************************************************************
+ * EXPORTS
+ ******************************************************************************************/
 export default DailyRevealGrid;

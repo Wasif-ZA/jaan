@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run rename:images && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "generate:images": "ts-node ./scripts/generateImageManifest.ts",
-    "prebuild": "npm run generate:images"
+    "rename:images": "ts-node ./scripts/renameAndManifest.js",
+    "prebuild": "npm run rename:images"
   },
   "dependencies": {
     "framer-motion": "^12.18.1",
@@ -19,11 +20,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   }
 }
