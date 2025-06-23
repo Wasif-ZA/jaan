@@ -7,11 +7,11 @@ import { FiHeart } from "react-icons/fi";
  * LoveLetter – displays a developer-provided letter in a heart-decorated box.
  */
 export interface LoveLetterProps {
-  /** The content of the letter as a plain string or JSX */
-  letter: React.ReactNode;
+  /** Content of the letter; use as children rather than a prop */
+  children: React.ReactNode;
 }
 
-const LoveLetter: FC<LoveLetterProps> = ({ letter }) => {
+const LoveLetter: FC<LoveLetterProps> = ({ children }) => {
   return (
     <section className="bg-pink-50 py-16">
       <div className="mx-auto w-full max-w-4xl px-4">
@@ -27,7 +27,7 @@ const LoveLetter: FC<LoveLetterProps> = ({ letter }) => {
         </h2>
 
         <div className="relative">
-          {/* Decorative hearts overlay behind text */}
+          {/* Decorative hearts overlay */}
           <div className="pointer-events-none absolute inset-0 flex flex-wrap p-2">
             {[...Array(20)].map((_, i) => (
               <FiHeart
@@ -37,9 +37,9 @@ const LoveLetter: FC<LoveLetterProps> = ({ letter }) => {
             ))}
           </div>
 
-          {/* Static letter content */}
+          {/* Letter content */}
           <div className="relative bg-white p-10 border-4 border-pink-300 rounded-2xl shadow-md text-gray-800 whitespace-pre-wrap">
-            {letter}
+            {children}
           </div>
         </div>
 

@@ -34,9 +34,17 @@ export default function Home() {
       {/* ───────────────  Love Letter  ─────────────── */}
       <section className="bg-red-50 py-16">
         <div className="mx-auto w-full max-w-4xl px-4">
-      
-            <LoveLetter letter="You are the light of my life. ❤️ the moment we met I could instantly tell you were different for other girls. I was capviated by how 
-            how unYou were for the second I met you the same. I prayed every single day “ya allah allow my ambitions to come true”. Underneath all that I was praying for my wife but I was not directly asking for it. But what he did instead gave something even better than what I had dreamed of. You turn my bad mood into a good mood. You made every waking moment interesting whilst your chaotic geet behaviour lowk scares me but I love it. You turned life for the better. I was never this ambitious until I met you. You've kickstarted my dormant ambition as I want to provide you with the future you deserve. Honestly speaking I am also very nervous to meet your parents. But every moment I spend behind the screen drives me crazy I want see you in person. I love and respect the person you've grown into. I cannot wait to meet you in real life then met your parents HOPEFULLY I am able to make a good enough impression so we finally officially end LDR. my jaaaanu my babyiee meri jaan. I love you and i hope this website is testament to that " />
+          <LoveLetter>
+            {`Dear You,
+
+You've captured my heart more than words can say. From the moment we met, I knew you were different. I was captivated by your uniqueness, your spirit, and the way you see the world.
+
+Every day, I thank Allah for bringing you into my life. You've turned my dreams into reality in ways I never expected. You've transformed my life, filling it with color and light. Your presence has awakened a dormant ambition in me, a desire to build a future worthy of you.
+
+I must admit, the thought of meeting your parents makes me nervous. I hope to make a good impression, to show them the depth of my feelings for you. This distance between us, though challenging, has only strengthened my love and respect for you.
+
+I long for the day we no longer have to rely on screens to connect. Until then, know that you are deeply loved and cherished. You are my jaanu, my baby, my everything. I love you.`}
+          </LoveLetter>
         </div>
       </section>
     </main>
