@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:images": "ts-node ./scripts/generateImageManifest.ts",
+  
     "rename:images": "ts-node ./scripts/renameAndManifest.js",
     "prebuild": "npm run rename:images"
   },
