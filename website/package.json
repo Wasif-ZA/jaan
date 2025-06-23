@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run rename:images && next dev",
+    "dev": "ts-node ./scripts/generateImageManifest.ts && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
   
     "rename:images": "ts-node ./scripts/renameAndManifest.js",
-    "prebuild": "npm run rename:images"
+    "prebuild": "ts-node ./scripts/generateImageManifest.ts"
   },
   "dependencies": {
     "framer-motion": "^12.18.1",
