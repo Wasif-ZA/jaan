@@ -26,10 +26,10 @@ const defaultPrompts: Prompt[] = [
   { id: 2, front: "Do you hate me?", back: " No jaanu I love you 💖" },
   { id: 3, front: "When you're angry at me?", back: "jaaanu this only temporay i will always love you with even with antics 🫶" },
   { id: 4, front: "When you want to hug me?", back: "I will always be there for you jaanu 🤗" },
-  { id: 5, front: "When you want to kiss me?", back: "I will always be there for you jaanu 😘" },
-  { id: 6, front: "When you want to cuddle me?", back: "I will always be there for you jaanu 🥰" },
-  { id: 7, front: "When you want to go on a date with me?", back: "I will always be there for you jaanu 🍽️" },
-  { id: 8, front: "When you want to watch a movie with me?", back: "I will always be there for you jaanu 🎬" },
+  { id: 5, front: "When you want to kiss me?", back: "I will always be to give you saliva exchanges 😘" },
+  { id: 6, front: "When you want to cuddle me?", back: "I will always be there to give you cuddle attacks 🥰" },
+  { id: 7, front: "When you want to go on a date with me?", back: "I will always plan in way you dont get in trouble🍽️" },
+  { id: 8, front: "When you want to watch a movie with me?", back: "I will torelate your cousins 🎬" },
   { id: 9, front: "When you want to go for a walk with me?", back: "I will always be there for you jaanu 🚶‍♂️" }
 ];
 
